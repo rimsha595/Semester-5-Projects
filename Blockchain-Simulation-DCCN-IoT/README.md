@@ -6,11 +6,9 @@ This project is a basic simulation of blockchain technology used for secure tran
 ## Features
 - Blockchain block creation simulation
 - Secure transaction flow
-- Basic encryption/verification logic (if implemented)
 - Visualization of blockchain structure
 
 ## Technologies Used
-- Programming Language (Python/JavaScript/etc.)
 - Blockchain concepts
 - Networking fundamentals
 
