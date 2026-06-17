@@ -15,6 +15,3 @@ This project is a web-based simulation of Context Switching in Operating Systems
 
 ## Purpose
 To understand Operating System concepts like process management and context switching through visualization.
-
-## Author
-Rimsha
