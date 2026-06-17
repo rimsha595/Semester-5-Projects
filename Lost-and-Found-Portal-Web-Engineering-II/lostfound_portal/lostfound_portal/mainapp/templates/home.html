@@ -1,0 +1,65 @@
+<!-- Home Page Template -->
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Latest Lost & Found Items</h2>
+<div class="row">
+    <!-- Lost Items -->
+    <div class="col-md-6">
+        <h4>Lost Items</h4>
+        {% for item in lost_items %}
+        <div class="card mb-3">
+            {% if item.photo %}
+            <img src="{{ item.photo.url }}" class="card-img-top" alt="Lost Photo">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ item.title }}</h5>
+                <p class="card-text">{{ item.description|truncatewords:15 }}</p>
+                <p>
+                    {% if item.status == 'Pending' %}
+                    <span class="badge bg-warning status-badge">{{ item.status }}</span>
+                    {% elif item.status == 'Matched' %}
+                    <span class="badge bg-info status-badge">{{ item.status }}</span>
+                    {% else %}
+                    <span class="badge bg-success status-badge">{{ item.status }}</span>
+                    {% endif %}
+                    <small class="text-muted">Location: {{ item.location }}</small>
+                </p>
+
+                <a href="{% url 'item_detail' 'Lost' item.id %}" class="btn btn-primary btn-sm">View Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <p>No lost items yet.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Found Items -->
+    <div class="col-md-6">
+        <h4>Found Items</h4>
+        {% for item in found_items %}
+        <div class="card mb-3">
+            {% if item.photo %}
+            <img src="{{ item.photo.url }}" class="card-img-top" alt="Found Photo">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ item.title }}</h5>
+                <p class="card-text">{{ item.description|truncatewords:15 }}</p>
+                <p>
+                    {% if item.status == 'Pending' %}
+                    <span class="badge bg-warning status-badge">{{ item.status }}</span>
+                    {% elif item.status == 'Matched' %}
+                    <span class="badge bg-info status-badge">{{ item.status }}</span>
+                    {% else %}
+                    <span class="badge bg-success status-badge">{{ item.status }}</span>
+                    {% endif %}
+                    <small class="text-muted">Location: {{ item.location }}</small>
+                </p>
+                <a href="{% url 'item_detail' 'Found' item.id %}" class="btn btn-primary btn-sm">View Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <p>No found items yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

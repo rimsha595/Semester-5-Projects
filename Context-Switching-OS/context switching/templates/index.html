@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context Switching Simulator</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+<body>
+    <div class="container">
+
+        <h1>Context Switching Simulator</h1>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <button onclick="showPage(1)">Upload & Simulation</button>
+            <button onclick="showPage(2)">CPU & Queues</button>
+            <button onclick="showPage(3)">Execution History</button>
+        </div>
+
+        <!-- ================= PAGE 1: UPLOAD & SIMULATION ================= -->
+        <div id="page1" class="page">
+
+            <!-- Upload Section -->
+            <div class="card">
+                <h2>Upload Process </h2>
+                <input type="file" id="fileInput">
+                <button id="uploadBtn">Upload</button>
+                <p id="uploadResult"></p>
+            </div>
+
+            <!-- Process Table -->
+            <div class="card">
+                <h2>Process List</h2>
+                <div class="table-scroll">
+                    <table id="processTable">
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>Filename</th>
+                                <th>Burst</th>
+                                <th>Arrival</th>
+                                <th>Priority</th>
+                                <th>PC</th>
+                                <th>SP</th>
+                                <th>WT</th>
+                                <th>TAT</th>
+                                <th>State</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Simulation Controls -->
+            <div class="card">
+                <h2>Simulation Controls</h2>
+                <button id="stepBtn">Step</button>
+                <button id="autoBtn" data-mode="start">Start Auto</button>
+                <label>Interval (ms): <input type="number" id="interval" value="500"></label>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 2: CPU & QUEUES ================= -->
+        <div id="page2" class="page" style="display:none;">
+
+            <!-- Process Table -->
+            <div class="card">
+                <h2>Process List</h2>
+                <div class="table-scroll">
+                    <table id="processTable2">
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>Filename</th>
+                                <th>Burst</th>
+                                <th>Arrival</th>
+                                <th>Priority</th>
+                                <th>PC</th>
+                                <th>SP</th>
+                                <th>WT</th>
+                                <th>TAT</th>
+                                <th>State</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Flex container for queues + pie chart -->
+            <div class="cpu-pie-container">
+
+                <!-- Queues Card -->
+                <div class="card cpu-queues-card">
+                    <p>Current Process: <strong><span id="current">None</span></strong></p>
+                    <div class="cpu-queues">
+                        <div class="queue-card">
+                            <h3>Ready Queue</h3>
+                            <div id="readyQueue" class="queue"></div>
+                        </div>
+                        <div class="queue-card">
+                            <h3>Blocked Queue</h3>
+                            <div id="blockedQueue" class="queue blocked"></div>
+                        </div>
+                    </div>
+                    <div style="margin-top:12px;">
+                        <span>CPU Utilization: <strong id="cpuUtil">0%</strong></span>
+                        &nbsp;&nbsp;&nbsp;
+                        <span>Throughput: <strong id="throughput">0</strong></span>
+                        <div class="cpuBarContainer">
+                            <div id="cpuProgress"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pie Chart Card -->
+                <div class="card cpu-pie">
+                    <h2>CPU Time Pie Chart</h2>
+                    <canvas id="cpuPieChart"></canvas>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ================= PAGE 3: EXECUTION HISTORY ================= -->
+        <div id="page3" class="page" style="display:none;">
+            <div class="card">
+                <div class="table-scroll">
+                    <table id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Process</th>
+                                <th>State</th>
+                                <th>PC</th>
+                                <th>SP</th>
+                                <th>Ready Queue</th>
+                                <th>Blocked Queue</th>
+                                <th>CPU Utilization</th>
+                                <th>Throughput</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div style="margin-top:10px;">
+                    <button id="csvBtnHistory">Export CSV</button>
+                    <button id="pdfBtnHistory">Export PDF</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Audio -->
+    <audio id="procSwitchSound" src="/static/sounds/tick.mp3" preload="auto"></audio>
+
+    <script src="/static/main.js"></script>
+    <script>
+        function showPage(n){
+            document.querySelectorAll('.page').forEach((p,i)=>{
+                p.style.display = (i+1===n)?"block":"none";
+            });
+        }
+    </script>
+</body>
+</html>

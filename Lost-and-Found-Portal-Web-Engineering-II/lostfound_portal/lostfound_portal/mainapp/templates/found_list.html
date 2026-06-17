@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ "Found Items" }}</h2>
+<div class="row">
+    {% for item in items %}
+    <div class="col-md-4">
+        <div class="card mb-3">
+            {% if item.photo %}
+            <img src="{{ item.photo.url }}" class="card-img-top" alt="Photo">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ item.title }}</h5>
+                <p class="card-text">{{ item.description|truncatewords:15 }}</p>
+                <p>
+                    {% if item.status == 'Pending' %}
+                    <span class="badge bg-warning status-badge">{{ item.status }}</span>
+                    {% elif item.status == 'Matched' %}
+                    <span class="badge bg-info status-badge">{{ item.status }}</span>
+                    {% else %}
+                    <span class="badge bg-success status-badge">{{ item.status }}</span>
+                    {% endif %}
+                    <small class="text-muted">Location: {{ item.location }}</small>
+                </p>
+                <a href="{% url 'item_detail' 'Found' item.id %}" class="btn btn-primary btn-sm">View</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No items available.</p>
+    {% if not lost_items %}
+    <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+        <div class="card text-center p-4 border-dashed">
+            <div class="display-4 text-muted">+</div>
+            <p class="text-muted">No found items yet. Be the first to post!</p>
+            <a href="{% url 'post_found' %}" class="btn btn-primary">Post Found Item</a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% endfor %}
+</div>
+{% endblock %}

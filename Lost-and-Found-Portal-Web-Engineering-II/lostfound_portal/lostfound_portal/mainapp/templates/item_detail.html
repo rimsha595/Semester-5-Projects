@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="card mb-4 shadow-sm">
+    {% if item.photo %}
+    <img src="{{ item.photo.url }}" class="card-img-top" alt="Photo">
+    {% endif %}
+    <div class="card-body">
+        <h4 class="card-title">{{ item.title }}</h4>
+        <p class="card-text">{{ item.description }}</p>
+        <p>
+            <span class="badge 
+                {% if item.status == 'Pending' %} bg-warning
+                {% elif item.status == 'Matched' %} bg-info
+                {% else %} bg-success
+                {% endif %}
+            status-badge">{{ item.status }}</span>
+            <small class="text-muted">Location: {{ item.location }}</small>
+        </p>
+
+        <!-- Status Update Button for Lost Item Owner -->
+        {% if type == 'Lost' and item.user == request.user and item.status != 'Found' %}
+        <form method="post" action="{% url 'update_status' item.id %}" class="mt-2">
+            {% csrf_token %}
+            <button class="btn btn-success btn-sm">Mark as Found</button>
+        </form>
+        {% endif %}
+        <!-- Delete Button (shown to owner only) -->
+        {% if item.user == request.user %}
+        <form method="POST" action="{% url 'delete_item' type item.id %}" class="mt-2">
+            {% csrf_token %}
+            <button class="btn btn-danger btn-sm">Delete</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Suggested Found Items -->
+{% if type == 'Lost' %}
+<h5>Suggested Found Items</h5>
+<div class="row">
+    {% for found in suggested_items %}
+    {% if found.title|matches_item:item.title or found.description|matches_item:item.description %}
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            {% if found.photo %}
+            <img src="{{ found.photo.url }}" class="card-img-top" alt="Photo">
+            {% endif %}
+            <div class="card-body">
+                <h6>{{ found.title }}</h6>
+                <p>{{ found.description|truncatewords:10 }}</p>
+                <a href="{% url 'item_detail' 'Found' found.id %}" class="btn btn-sm btn-primary">View</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% empty %}
+    <p>No suggested found items.</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+<h5>Comments</h5>
+<div class="mb-4">
+    {% for comment in comments %}
+    <div class="border p-2 mb-2 rounded shadow-sm">
+        <strong>{{ comment.user.username }}</strong>
+        <small class="text-muted">{{ comment.timestamp|date:"d M Y H:i" }}</small>
+        <p>{{ comment.text }}</p>
+    </div>
+    {% empty %}
+    <p>No comments yet.</p>
+    {% endfor %}
+</div>
+
+<!-- Comment Form -->
+{% if user.is_authenticated %}
+<form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+        <textarea name="comment" class="form-control" rows="3" placeholder="Add a comment..." required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Post Comment</button>
+</form>
+{% else %}
+<p><a href="{% url 'login' %}">Login</a> to comment</p>
+{% endif %}
+{% endblock %}
